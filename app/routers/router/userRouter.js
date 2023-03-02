@@ -15,5 +15,6 @@ userRouter
   .post('/users/miniProgramLogin', userController.miniProgramLogin)
   .post('/users/findUserName', userController.FindUserName)
   .post('/users/register', userController.Register)
+  .post('/users/checkinfo', userController.CheckInfo)
 
 module.exports = userRouter;

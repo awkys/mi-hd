@@ -76,12 +76,14 @@ module.exports = {
       const tempNum = tempShoppingCart[0].num + 1;
 
       const product = await productDao.GetProductById(tempShoppingCart[0].product_id);
-      const maxNum = Math.floor(product[0].product_num / 2);
+      // const maxNum = Math.floor(product[0].product_num / 2);
+      const maxNum = 100;
       //判断数量是否达到限购数量
       if (tempNum > maxNum) {
         ctx.body = {
           code: '003',
-          msg: '数量达到限购数量 ' + maxNum
+          // 数量达到限购数量
+          msg: 'The quantity reaches the purchase limit' + maxNum
         }
         return;
       }
@@ -93,7 +95,8 @@ module.exports = {
         if (result.affectedRows === 1) {
           ctx.body = {
             code: '002',
-            msg: '该商品已在购物车，数量 +1'
+            // 该商品已在购物车，数量
+            msg: 'The product is already in the shopping cart, quantity +1'
           }
           return;
         }
@@ -114,7 +117,8 @@ module.exports = {
 
           ctx.body = {
             code: '001',
-            msg: '添加购物车成功',
+            //添加购物车成功
+            msg: 'Add to cart successfully',
             shoppingCartData: data
           }
           return;
@@ -126,7 +130,8 @@ module.exports = {
 
     ctx.body = {
       code: '005',
-      msg: '添加购物车失败,未知错误'
+      //添加购物车失败,未知错误
+      msg: 'Failed to add shopping cart, unknown error'
     }
   },
   /**
@@ -151,7 +156,8 @@ module.exports = {
         if (result.affectedRows === 1) {
           ctx.body = {
             code: '001',
-            msg: '删除购物车成功'
+            //删除购物车成功
+            msg: 'Delete shopping cart successfully'
           }
           return;
         }
@@ -162,7 +168,8 @@ module.exports = {
       // 不存在则返回信息
       ctx.body = {
         code: '002',
-        msg: '该商品不在购物车'
+        //该商品不在购物车
+        msg: 'The product is not in the shopping cart'
       }
     }
   },
@@ -180,7 +187,8 @@ module.exports = {
     if (num < 1) {
       ctx.body = {
         code: '004',
-        msg: '数量不合法'
+        //数量不合法
+        msg: 'Illegal quantity'
       }
       return;
     }
@@ -194,17 +202,20 @@ module.exports = {
       if (tempShoppingCart[0].num == num) {
         ctx.body = {
           code: '003',
-          msg: '数量没有发生变化'
+          //数量没有发生变化
+          msg: 'Quantity did not change'
         }
         return;
       }
       const product = await productDao.GetProductById(product_id);
-      const maxNum = Math.floor(product[0].product_num / 2);
+      // const maxNum = Math.floor(product[0].product_num / 2);
+      const maxNum = 100;
       // 判断数量是否达到限购数量
       if (num > maxNum) {
         ctx.body = {
           code: '004',
-          msg: '数量达到限购数量 ' + maxNum
+          //数量达到限购数量
+          msg: 'The quantity reaches the purchase limit' + maxNum
         }
         return;
       }
@@ -216,7 +227,8 @@ module.exports = {
         if (result.affectedRows === 1) {
           ctx.body = {
             code: '001',
-            msg: '修改购物车数量成功'
+            //修改购物车数量成功
+            msg: 'Modify the shopping cart quantity success rate'
           }
           return;
         }
@@ -227,7 +239,8 @@ module.exports = {
       //不存在则返回信息
       ctx.body = {
         code: '002',
-        msg: '该商品不在购物车'
+        //该商品不在购物车
+        msg: 'The product is not in the shopping cart'
       }
     }
   }

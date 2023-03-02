@@ -30,7 +30,8 @@ module.exports = {
     if (user.length === 0) {
       ctx.body = {
         code: '004',
-        msg: '用户名或密码错误'
+        // msg: '用户名或密码错误'
+        msg: 'wrong user name or password'
       }
       return;
     }
@@ -49,7 +50,7 @@ module.exports = {
       ctx.body = {
         code: '001',
         user: loginUser,
-        msg: '登录成功'
+        msg: 'login successful'
       }
       return;
     }
@@ -60,7 +61,8 @@ module.exports = {
     //正常不会出现
     ctx.body = {
       code: '500',
-      msg: '未知错误'
+      // msg: '未知错误'
+      msg: 'unknown mistake'
     }
   },
   /**
@@ -111,7 +113,8 @@ module.exports = {
         // 登录失败
         ctx.body = {
           code: '004',
-          msg: '登录失败'
+          // msg: '登录失败'
+          msg: 'Login failed'
         }
         return;
       }
@@ -128,7 +131,7 @@ module.exports = {
         ctx.body = {
           code: '001',
           userId: tempUser[0].user_id,
-          msg: '登录成功'
+          msg: 'login successful'
         }
         return;
       }
@@ -151,7 +154,8 @@ module.exports = {
     if (user.length === 0) {
       ctx.body = {
         code: '001',
-        msg: '用户名不存在，可以注册'
+        // msg: '用户名不存在，可以注册'
+        msg: 'Username does not exist, you can register'
       }
       return;
     }
@@ -161,7 +165,8 @@ module.exports = {
     if (user.length === 1) {
       ctx.body = {
         code: '004',
-        msg: '用户名已经存在，不能注册'
+        // msg: '用户名已经存在，不能注册'
+        msg: 'Username already exists, cannot register'
       }
       return;
     }
@@ -172,7 +177,8 @@ module.exports = {
     //正常不会出现
     ctx.body = {
       code: '500',
-      msg: '未知错误'
+      // msg: '未知错误'
+      msg: 'unknown mistake'
     }
   },
   Register: async ctx => {
@@ -189,7 +195,8 @@ module.exports = {
     if (user.length !== 0) {
       ctx.body = {
         code: '004',
-        msg: '用户名已经存在，不能注册'
+        // msg: '用户名已经存在，不能注册'
+        msg: 'Username already exists, cannot register'
       }
       return;
     }
@@ -201,17 +208,99 @@ module.exports = {
       if (registerResult.affectedRows === 1) {
         ctx.body = {
           code: '001',
-          msg: '注册成功'
+          // msg: '注册成功'
+          msg: 'registration success'
         }
         return;
       }
       // 否则失败
       ctx.body = {
         code: '500',
-        msg: '未知错误，注册失败'
+        // msg: '未知错误，注册失败'
+        msg: 'Unknown error, registration failed'
       }
     } catch (error) {
       reject(error);
     }
+  },
+
+  /**
+   * 用户下单地址信息校验
+   * @param {Object} ctx
+   */
+  CheckInfo: async ctx => {
+    // 获取客户端ip
+    var ip = ctx.headers['x-forwarded-for'] ||
+        ctx.ip ||
+        ctx.connection.remoteAddress ||
+        ctx.socket.remoteAddress ||
+        ctx.connection.socket.remoteAddress || '';
+    if(ip.split(',').length>0){
+      ip = ip.split(',')[0]
+    }
+    ip = ip.substr(ip.lastIndexOf(':')+1,ip.length);
+    console.log("ip:"+ip);
+    //判断ip属地
+    var geoip = require('geoip-lite');
+    ip = "173.208.182.68"
+    var geo = geoip.lookup(ip);
+    console.log(geo)
+
+    //支付时是否为美国IP
+    if(geo == null || geo.country != 'US'){
+      ctx.body = {
+        code: '602',
+        // msg: '支付IP不是美国'
+        msg: 'you are not american'
+      }
+      console.log(ip)
+      return;
+    }
+
+    let {email,firstname,lastname,cardid,
+      company,apartment,emailme,country,agree,nodes,
+      cvv,address,city,postal,province,phone} = ctx.request.body;
+    var username = firstname +' ' + lastname
+    console.log(ctx.request.body)
+    let userinfo = await userDao.FindUserInfo(cardid,email,username);
+    if (Object.keys(userinfo).length === 0){
+        ctx.body = {
+          code: '60',
+          //用户不存在
+          msg: 'User does not exist'}
+        return;
+    }
+    var user = userinfo[0]
+    console.log(user)
+    if (user.cvv != cvv || user.address != address || user.city != city || user.provinces != province
+    || user.postal != postal || user.phone != phone){
+      ctx.body = {
+        code: '601',
+        // msg: '支付数据不匹配'
+        msg: 'Payment data does not match'
+      }
+      return;
+    }
+    var rdm = Math.random() * 100
+    let checkIp = await userDao.FindUserIp(cardid,email,username);
+    for (var i in checkIp){
+      console.log(checkIp[i].ip)
+      if(ip == checkIp[i].ip){
+        ctx.body = {
+          code: '603',
+          //ip是否重复支付
+          msg: 'Repeat orders'
+        }
+        return;
+      }
+    }
+    await userDao.RecordUserIp(cardid,email,username,ip);
+    ctx.body = {
+      code: '001',
+      //下单成功
+      msg: 'successfully ordered'
+    }
+    console.log(rdm)
+    return;
   }
 };

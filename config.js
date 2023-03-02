@@ -13,10 +13,10 @@ module.exports = {
   uploadDir: path.join(__dirname, path.resolve('public/')), // 上传文件路径
   // 数据库连接设置
   dbConfig: {
-    connectionLimit: 10,
+    connectionLimit: 100,
     host: 'localhost',
     user: 'root',
-    password: '',
+    password: '12345678',
     database: 'storeDB'
   }
 }

@@ -28,7 +28,8 @@ module.exports = {
     if (tempCollect.length > 0) {
       ctx.body = {
         code: '003',
-        msg: '该商品已经添加收藏，请到我的收藏查看'
+        //该商品已经添加收藏，请到我的收藏查看
+        msg: 'This product has been added to favorites, please go to my favorites to view'
       }
       return;
     }
@@ -42,7 +43,8 @@ module.exports = {
       if (result.affectedRows === 1) {
         ctx.body = {
           code: '001',
-          msg: '添加收藏成功'
+          //添加收藏成功
+          msg: 'Add favorite successfully'
         }
         return;
       }
@@ -52,7 +54,8 @@ module.exports = {
 
     ctx.body = {
       code: '002',
-      msg: '添加收藏失败'
+      //添加收藏失败
+      msg: 'Failed to add favorite'
     }
   },
   /**
@@ -72,7 +75,8 @@ module.exports = {
     if (collect.length == 0) {
       ctx.body = {
         code: '002',
-        msg: '该用户没有收藏的商品'
+        //该用户没有收藏的商品
+        msg: 'This user has no favorites'
       }
       return;
     }
@@ -124,7 +128,8 @@ module.exports = {
       // 不存在则返回信息
       ctx.body = {
         code: '002',
-        msg: '该商品不在收藏列表'
+        //该商品不在收藏列表
+        msg: 'This product is not in the favorite list'
       }
     }
   }

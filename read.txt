@@ -1,0 +1,25 @@
+安装环境：
+Node.js 14 (注意高版本不兼容)
+python3 
+pip3
+pip3 install pymysql
+pip3 install xlrd
+mysql数据库
+
+运行步骤：
+1.登陆数据库，导入数据：source storeDB.sql
+2.启动后端：mi-hd
+  打开mi-hd目录
+  修改config.js中的数据库连接信息
+  安装依赖：npm install
+  启动：node app.js
+3.启动vue前端：mi-vue
+  打开mi-vue目录
+  安装依赖：npm install
+  启动：npm run serve
+
+注：
+script.py是导入excel中的支付数据进数据库的
+需要修改excel文件后嘴为.xls
+修改脚本中的excel路径和数据库连接信息
+运行脚本：python3 script.py

@@ -21,7 +21,7 @@ module.exports = {
   },
   // 连接数据库,根据商品分类id获取首页展示的商品信息
   GetPromoProduct: async (categoryID) => {
-    const sql = "select * from product where category_id = ? order by product_sales desc limit 7";
+    const sql = "select * from product where category_id = ? order by product_sales desc limit 11";
     return await db.query(sql, categoryID);
   },
   // 连接数据库,分页获取所有的商品信息
